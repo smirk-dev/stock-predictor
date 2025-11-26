@@ -103,7 +103,7 @@ jupyter notebook notebooks/01_data_exploration.ipynb
 
 ## 📋 Configuration
 
-Edit `config.yaml` to customize:
+Edit `config.yaml` to customize:-
 
 - **Data paths** and split ratios
 - **Technical indicators** to calculate
