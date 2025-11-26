@@ -746,6 +746,16 @@ def show_training_page():
             
             metrics = model.evaluate(X_test, y_test)
             
+            # IMMEDIATE SANITY CHECK on predictions
+            test_predictions = model.predict(X_test)
+            st.info(f"🔍 Test predictions range: ${test_predictions.min():.2f} to ${test_predictions.max():.2f}")
+            st.info(f"🔍 Actual test targets: ${y_test.min():.2f} to ${y_test.max():.2f}")
+            
+            if test_predictions.mean() < 1.0:
+                st.error("❌ CRITICAL ERROR: Predictions are in scaled range (0-1)!")
+                st.error("This means the model was trained on scaled targets. Training is broken!")
+                return
+            
             progress_bar.progress(100)
             status_text.text("✅ Training complete!")
             
