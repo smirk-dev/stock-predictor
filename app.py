@@ -584,6 +584,10 @@ def show_training_page():
     
     # Training button
     if st.button("🚀 Start Training", type="primary"):
+        # FORCE CLEAR old model to ensure fresh training
+        st.session_state.trained_model = None
+        st.session_state.training_complete = False
+        
         try:
             progress_bar = st.progress(0)
             status_text = st.empty()
@@ -692,6 +696,11 @@ def show_training_page():
             if np.any(np.isnan(y_train)) or np.any(np.isinf(y_train)):
                 st.error("❌ Target values contain NaN or Inf! Data preprocessing failed.")
                 return
+            
+            # SANITY TEST: Check if a simple baseline works
+            baseline_pred = np.full_like(y_test, y_train.mean())
+            baseline_r2 = 1 - (np.sum((y_test - baseline_pred)**2) / np.sum((y_test - y_test.mean())**2))
+            st.info(f"📊 Baseline R² (predicting mean): {baseline_r2:.4f} (model should beat this!)")
             
             # Train model
             status_text.text(f"🏋️ Training {model_type} model...")
