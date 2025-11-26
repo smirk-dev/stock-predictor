@@ -1,6 +1,6 @@
 # 📈 Stock Analysis and Prediction System
 
-A comprehensive, production-ready machine learning system for stock market analysis and price prediction using deep learning (LSTM, GRU) and ensemble methods.
+A comprehensive, production-ready machine learning system for stock market analysis and price prediction using deep learning (LSTM,GRU) and ensemble methods.
 
 ## 🌟 Features
 
