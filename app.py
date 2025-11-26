@@ -608,6 +608,9 @@ def show_training_page():
             
             # Scale features
             feature_cols = preprocessor.get_feature_importance_columns(train_df)
+            
+            st.info(f"🔢 Using {len(feature_cols)} features: {', '.join(feature_cols[:10])}{'...' if len(feature_cols) > 10 else ''}")
+            
             train_scaled, val_scaled, test_scaled = preprocessor.scale_features(
                 train_df, val_df, test_df, feature_cols
             )
@@ -631,6 +634,14 @@ def show_training_page():
                 X_test, y_test = preprocessor.create_sequences(
                     test_scaled, sequence_length, target_col='target', feature_cols=feature_cols
                 )
+                
+                st.info(f"📊 Sequence shapes - X_train: {X_train.shape}, X_test: {X_test.shape}")
+                st.info(f"📊 Target shapes - y_train: {y_train.shape}, y_test: {y_test.shape}")
+                
+                if X_train.shape[0] == 0 or X_test.shape[0] == 0:
+                    st.error("❌ Not enough data to create sequences! Reduce sequence length or use more data.")
+                    return
+                    
             else:
                 X_train = train_scaled[feature_cols].values
                 y_train = train_scaled['target'].values
@@ -822,9 +833,16 @@ def show_prediction_page():
                 # Take enough data for sequence
                 recent_data = df.tail(sequence_length + 50).copy()
                 
-                # Scale using the SAME scaler from training
+                # Verify all feature columns exist
+                missing_cols = [col for col in feature_cols if col not in recent_data.columns]
+                if missing_cols:
+                    st.error(f"❌ Missing features in data: {missing_cols}")
+                    st.info("Please retrain the model with the current data.")
+                    return
+                
+                # Scale using the SAME scaler from training - only the exact features
                 recent_scaled = recent_data.copy()
-                recent_scaled[feature_cols] = trained_info['preprocessor'].feature_scaler.transform(
+                recent_scaled[feature_cols] = trained_info['scaler'].transform(
                     recent_data[feature_cols]
                 )
                 
