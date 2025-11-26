@@ -1,0 +1,108 @@
+# Stock Prediction Configuration
+
+# Data Configuration
+data:
+  all_stocks_path: "all_stocks_5yr.csv"
+  individual_stocks_dir: "individual_stocks_5yr/individual_stocks_5yr"
+  train_split: 0.7
+  validation_split: 0.15
+  test_split: 0.15
+  sequence_length: 60  # Number of days to look back for prediction
+  
+# Feature Engineering
+features:
+  technical_indicators:
+    - RSI
+    - MACD
+    - Bollinger_Bands
+    - SMA_20
+    - SMA_50
+    - SMA_200
+    - EMA_12
+    - EMA_26
+    - ATR
+    - OBV
+    - Stochastic
+    - ADX
+    - CCI
+    - Williams_R
+    - ROC
+  
+  # Window sizes for moving averages
+  sma_windows: [5, 10, 20, 50, 200]
+  ema_windows: [12, 26, 50]
+  
+  # RSI period
+  rsi_period: 14
+  
+  # MACD parameters
+  macd_fast: 12
+  macd_slow: 26
+  macd_signal: 9
+
+# Model Configuration
+models:
+  lstm:
+    units: [128, 64, 32]
+    dropout: 0.2
+    learning_rate: 0.001
+    batch_size: 32
+    epochs: 100
+    patience: 15
+    
+  gru:
+    units: [128, 64]
+    dropout: 0.2
+    learning_rate: 0.001
+    batch_size: 32
+    epochs: 100
+    patience: 15
+    
+  random_forest:
+    n_estimators: 200
+    max_depth: 20
+    min_samples_split: 5
+    min_samples_leaf: 2
+    
+  ensemble:
+    models: ["lstm", "gru", "random_forest"]
+    weights: [0.4, 0.3, 0.3]
+
+# Prediction Configuration
+prediction:
+  target: "close"  # Price to predict
+  horizons: [1, 5, 30]  # Days ahead to predict
+  
+# Training Configuration
+training:
+  random_seed: 42
+  validation_frequency: 5  # Validate every N epochs
+  save_best_only: true
+  checkpoint_dir: "models/checkpoints"
+  model_save_dir: "models/saved_models"
+  
+# Evaluation Configuration
+evaluation:
+  metrics:
+    - RMSE
+    - MAE
+    - MAPE
+    - R2
+    - Directional_Accuracy
+  
+  backtesting:
+    initial_capital: 10000
+    commission: 0.001  # 0.1%
+    
+# Visualization Configuration
+visualization:
+  figure_size: [15, 8]
+  style: "seaborn-v0_8-darkgrid"
+  save_plots: true
+  plots_dir: "outputs/plots"
+  
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  log_file: "logs/stock_predictor.log"
