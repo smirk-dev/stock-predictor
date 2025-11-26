@@ -49,10 +49,11 @@ st.markdown("""
         padding: 1rem 0;
     }
     .metric-card {
-        background-color: #f0f2f6;
+        background-color: #1e1e1e;
         padding: 1rem;
         border-radius: 0.5rem;
         border-left: 4px solid #667eea;
+        color: #ffffff;
     }
     .success-box {
         padding: 1rem;
