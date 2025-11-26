@@ -620,14 +620,24 @@ def show_training_page():
             
             st.info(f"📊 Data split - Train: {len(train_df)}, Val: {len(val_df)}, Test: {len(test_df)}")
             
-            # Scale features
+            # Scale features (NOT target!)
             feature_cols = preprocessor.get_feature_importance_columns(train_df)
             
             st.info(f"🔢 Using {len(feature_cols)} features: {', '.join(feature_cols[:10])}{'...' if len(feature_cols) > 10 else ''}")
             
+            # Scale features only
             train_scaled, val_scaled, test_scaled = preprocessor.scale_features(
                 train_df, val_df, test_df, feature_cols
             )
+            
+            # Keep unscaled target for training (CRITICAL!)
+            train_scaled['target'] = train_df['target'].values
+            val_scaled['target'] = val_df['target'].values
+            test_scaled['target'] = test_df['target'].values
+            
+            # Validate target values
+            st.info(f"🎯 Target range: ${train_df['target'].min():.2f} to ${train_df['target'].max():.2f}")
+            st.info(f"📊 Current price range: ${train_df['close'].min():.2f} to ${train_df['close'].max():.2f}")
             
             progress_bar.progress(40)
             
@@ -666,6 +676,11 @@ def show_training_page():
                 y_test = test_scaled['target'].values
             
             progress_bar.progress(50)
+            
+            # Validate data before training
+            if np.any(np.isnan(y_train)) or np.any(np.isinf(y_train)):
+                st.error("❌ Target values contain NaN or Inf! Data preprocessing failed.")
+                return
             
             # Train model
             status_text.text(f"🏋️ Training {model_type} model...")
@@ -768,7 +783,7 @@ def show_training_page():
             )
             st.plotly_chart(fig, use_container_width=True)
             
-            # Save model
+            # Save model with all necessary info
             st.session_state.trained_model = {
                 'model': model,
                 'ticker': selected_ticker,
@@ -778,7 +793,9 @@ def show_training_page():
                 'feature_cols': feature_cols,
                 'sequence_length': sequence_length,
                 'scaler': preprocessor.feature_scaler,
-                'n_features': len(feature_cols)
+                'n_features': len(feature_cols),
+                'prediction_horizon': prediction_horizon,
+                'last_close_price': df['close'].iloc[-1]
             }
             st.session_state.training_complete = True
             
