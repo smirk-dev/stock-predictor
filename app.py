@@ -518,6 +518,20 @@ def show_training_page():
     """Display model training page."""
     
     st.title("🤖 Train Model")
+    
+    # Add clear model button if model exists
+    if st.session_state.trained_model is not None:
+        col_info, col_btn = st.columns([3, 1])
+        with col_info:
+            st.info(f"📦 Current model: {st.session_state.trained_model['model_type']} for {st.session_state.trained_model['ticker']}")
+        with col_btn:
+            if st.button("🗑️ Clear Model", type="secondary"):
+                st.session_state.trained_model = None
+                st.session_state.training_complete = False
+                st.success("✅ Model cleared! Ready for fresh training.")
+                st.rerun()
+        st.markdown("---")
+    
     st.write("Train machine learning models for stock price prediction")
     
     # Training configuration
