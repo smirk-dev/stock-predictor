@@ -651,6 +651,7 @@ def show_training_page():
                 
                 st.info(f"📊 Sequence shapes - X_train: {X_train.shape}, X_test: {X_test.shape}")
                 st.info(f"📊 Target shapes - y_train: {y_train.shape}, y_test: {y_test.shape}")
+                st.info(f"✅ Model will use {X_train.shape[2]} features (excluding target column)")
                 
                 if X_train.shape[0] == 0 or X_test.shape[0] == 0:
                     st.error("❌ Not enough data to create sequences! Reduce sequence length or use more data.")

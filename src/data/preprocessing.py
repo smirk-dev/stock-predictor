@@ -155,18 +155,20 @@ class DataPreprocessor:
                           if col not in exclude_cols and col != target_col 
                           and df[col].dtype in ['float64', 'float32', 'int64', 'int32']]
         
-        # Ensure target column is included in features
-        if target_col in df.columns and target_col not in feature_cols:
-            feature_cols = [target_col] + feature_cols
-        
+        # Use the provided feature columns - do NOT modify them
         data = df[feature_cols].values
-        target_idx = feature_cols.index(target_col) if target_col in feature_cols else 0
+        
+        # Get target data separately
+        if target_col not in df.columns:
+            raise ValueError(f"Target column '{target_col}' not found in DataFrame")
+        
+        target_data = df[target_col].values
         
         X, y = [], []
         
         for i in range(len(data) - sequence_length - horizon + 1):
             X.append(data[i:i + sequence_length])
-            y.append(data[i + sequence_length + horizon - 1, target_idx])
+            y.append(target_data[i + sequence_length + horizon - 1])
         
         X = np.array(X)
         y = np.array(y)
