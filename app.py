@@ -631,13 +631,23 @@ def show_training_page():
             )
             
             # Keep unscaled target for training (CRITICAL!)
+            # Note: scale_features already preserves target, but let's be explicit
             train_scaled['target'] = train_df['target'].values
             val_scaled['target'] = val_df['target'].values
             test_scaled['target'] = test_df['target'].values
             
-            # Validate target values
-            st.info(f"🎯 Target range: ${train_df['target'].min():.2f} to ${train_df['target'].max():.2f}")
-            st.info(f"📊 Current price range: ${train_df['close'].min():.2f} to ${train_df['close'].max():.2f}")
+            # Validate target values - MUST be in actual price range
+            target_min, target_max = train_df['target'].min(), train_df['target'].max()
+            close_min, close_max = train_df['close'].min(), train_df['close'].max()
+            
+            st.info(f"🎯 Target range: ${target_min:.2f} to ${target_max:.2f}")
+            st.info(f"📊 Current price range: ${close_min:.2f} to ${close_max:.2f}")
+            
+            # SANITY CHECK: Target should be similar to close prices
+            if target_min < 0.1 or target_max > close_max * 3:
+                st.error(f"❌ TARGET VALUES ARE WRONG! Min={target_min:.4f}, Max={target_max:.4f}")
+                st.error("This indicates data preprocessing is broken. Please check the code.")
+                return
             
             progress_bar.progress(40)
             
@@ -662,6 +672,7 @@ def show_training_page():
                 st.info(f"📊 Sequence shapes - X_train: {X_train.shape}, X_test: {X_test.shape}")
                 st.info(f"📊 Target shapes - y_train: {y_train.shape}, y_test: {y_test.shape}")
                 st.info(f"✅ Model will use {X_train.shape[2]} features (excluding target column)")
+                st.info(f"🎯 y_train range: ${y_train.min():.2f} to ${y_train.max():.2f} (mean: ${y_train.mean():.2f})")
                 
                 if X_train.shape[0] == 0 or X_test.shape[0] == 0:
                     st.error("❌ Not enough data to create sequences! Reduce sequence length or use more data.")
