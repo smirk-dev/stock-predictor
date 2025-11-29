@@ -8,7 +8,7 @@ from typing import Optional, List, Dict, Tuple
 from datetime import datetime, timedelta
 import logging
 
-from .live_data_fetcher import LiveDataFetcher
+from .live_data_fetcher import LiveDataFetcher, POPULAR_US_STOCKS, POPULAR_INDIAN_STOCKS
 from .cache_manager import CacheManager
 
 logger = logging.getLogger(__name__)
@@ -101,8 +101,8 @@ class DataService:
             List of ticker symbols
         """
         if market.lower() == 'india':
-            return self.fetcher.POPULAR_INDIAN_STOCKS
-        return self.fetcher.POPULAR_US_STOCKS
+            return POPULAR_INDIAN_STOCKS
+        return POPULAR_US_STOCKS
     
     def validate_ticker(self, ticker: str) -> bool:
         """Validate if ticker exists."""
