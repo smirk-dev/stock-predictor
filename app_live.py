@@ -431,10 +431,34 @@ def train_model(ticker, df, model_type, config):
         progress_bar.progress(30)
         
         preprocessor = DataPreprocessor()
-        X_train, X_test, y_train, y_test, scaler = preprocessor.prepare_data(
-            df_features,
-            target_col='close',
-            sequence_length=config['sequence_length']
+        
+        # Split data
+        train_df, test_df = preprocessor.split_data(
+            df_features, 
+            train_ratio=0.8,
+            validation_ratio=0.0
+        )
+        
+        # Get feature columns (exclude target and metadata)
+        feature_cols = [col for col in train_df.columns 
+                       if col not in ['date', 'name', 'close']]
+        
+        # Scale features
+        train_scaled, test_scaled, scaler = preprocessor.scale_features(
+            train_df, test_df, feature_cols=feature_cols
+        )
+        
+        # Create sequences
+        X_train, y_train = preprocessor.create_sequences(
+            train_scaled,
+            sequence_length=config['sequence_length'],
+            target_col='close'
+        )
+        
+        X_test, y_test = preprocessor.create_sequences(
+            test_scaled,
+            sequence_length=config['sequence_length'],
+            target_col='close'
         )
         
         # Model training
