@@ -573,7 +573,7 @@ def generate_predictions(ticker, model_info, days, confidence_level):
             
             # Prepare recent data
             engineer = FeatureEngineer()
-            df_features = engineer.add_technical_indicators(df.copy())
+            df_features = engineer.add_all_features(df.copy())
             
             # Get last sequence for prediction
             preprocessor = DataPreprocessor()
