@@ -182,7 +182,7 @@ class LiveDataFetcher:
         
         return results
     
-    def get_market_overview(self) -> Dict:
+    def get_market_overview(self) -> pd.DataFrame:
         """Get overview of major market indices."""
         indices = {
             'S&P 500': '^GSPC',
@@ -192,7 +192,7 @@ class LiveDataFetcher:
             'SENSEX': '^BSESN'
         }
         
-        overview = {}
+        overview_data = []
         for name, ticker in indices.items():
             try:
                 stock = yf.Ticker(ticker)
@@ -200,17 +200,18 @@ class LiveDataFetcher:
                 if len(data) >= 2:
                     current = data['Close'].iloc[-1]
                     previous = data['Close'].iloc[-2]
-                    change = ((current - previous) / previous) * 100
+                    change_pct = ((current - previous) / previous) * 100
                     
-                    overview[name] = {
-                        'value': current,
-                        'change': change,
-                        'ticker': ticker
-                    }
+                    overview_data.append({
+                        'name': name,
+                        'ticker': ticker,
+                        'price': current,
+                        'change_pct': change_pct
+                    })
             except:
                 continue
         
-        return overview
+        return pd.DataFrame(overview_data)
     
     def validate_ticker(self, ticker: str) -> bool:
         """Check if a ticker is valid."""

@@ -11,6 +11,10 @@ from pathlib import Path
 import sys
 import logging
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Add src to path
 sys.path.append(str(Path(__file__).parent))
 
@@ -121,14 +125,15 @@ def show_market_overview():
     try:
         overview = st.session_state.data_service.get_market_overview()
         
-        if not overview.empty:
+        if isinstance(overview, pd.DataFrame) and not overview.empty:
             for _, row in overview.iterrows():
                 change_color = "🟢" if row['change_pct'] >= 0 else "🔴"
                 st.markdown(f"**{row['name']}**: {row['price']:.2f} {change_color} {row['change_pct']:+.2f}%")
         else:
             st.info("Market data unavailable")
     except Exception as e:
-        st.error(f"Error loading market data: {e}")
+        st.warning(f"Market data temporarily unavailable")
+        logger.error(f"Error loading market data: {e}")
 
 
 def show_cache_stats():
