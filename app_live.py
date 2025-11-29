@@ -424,7 +424,7 @@ def train_model(ticker, df, model_type, config):
         progress_bar.progress(20)
         
         engineer = FeatureEngineer()
-        df_features = engineer.add_technical_indicators(df.copy())
+        df_features = engineer.add_all_features(df.copy())
         
         # Preprocessing
         status_text.text("⚙️ Preprocessing data...")
