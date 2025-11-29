@@ -15,7 +15,6 @@ import logging
 sys.path.append(str(Path(__file__).parent))
 
 from src.data import DataService
-from src.config import get_config
 
 # Page configuration
 st.set_page_config(
