@@ -433,11 +433,15 @@ def train_model(ticker, df, model_type, config):
         preprocessor = DataPreprocessor()
         
         # Split data
-        train_df, test_df = preprocessor.split_data(
+        splits = preprocessor.split_data(
             df_features, 
             train_ratio=0.8,
-            validation_ratio=0.0
+            val_ratio=0.0,
+            test_ratio=0.2
         )
+        
+        train_df = splits['train']
+        test_df = splits['test']
         
         # Get feature columns (exclude target and metadata)
         feature_cols = [col for col in train_df.columns 
