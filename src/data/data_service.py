@@ -50,7 +50,7 @@ class DataService:
         
         # Fetch from API
         logger.info(f"Fetching fresh data for {ticker}")
-        df, metadata = self.fetcher.fetch_stock_data(ticker, period=period)
+        df = self.fetcher.fetch_stock_data(ticker, period=period)
         
         if df.empty:
             # Fallback to cache if API fails
@@ -60,8 +60,6 @@ class DataService:
         
         # Save to cache
         self.cache.save_stock_data(ticker, df)
-        if metadata:
-            self.cache.save_metadata(ticker, metadata)
         
         return df, 'api'
     
