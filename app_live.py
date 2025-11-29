@@ -87,7 +87,7 @@ def main():
     # Sidebar
     with st.sidebar:
         st.image("https://via.placeholder.com/300x100/667eea/ffffff?text=Stock+Predictor", 
-                use_container_width=True)
+                use_column_width=True)
         st.markdown("### 🌍 Real-Time Global Markets")
         st.markdown("Track and predict stocks from NYSE, NASDAQ, NSE, BSE and more!")
         
